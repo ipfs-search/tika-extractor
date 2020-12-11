@@ -48,7 +48,96 @@
       <artifactId>rest-assured</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- tika -->
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers</artifactId>
+      <version>1.25</version>
+
+      <exclusions>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>jcl-over-slf4j</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>jul-over-slf4j</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>javax.annotation</groupId>
+              <artifactId>javax.annotation-api</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>jakarta.xml.bind</groupId>
+              <artifactId>jakarta.xml.bind-api</artifactId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- language detection -->
+    <dependency>
+        <groupId>org.apache.tika</groupId>
+        <artifactId>tika-langdetect</artifactId>
+        <version>1.25</version>
+
+        <exclusions>
+            <exclusion>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jul-over-slf4j</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+    <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.spec.javax.xml.bind</groupId>
+        <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+    </dependency>
+
+    <!-- logging -->
+
+    <!-- bridge all logging to Quarkus native JBoss LogManager -->
+    <!-- Bridge Apache Commons Loggin and Jakarta Common Logging (Jcl) -->
+    <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>commons-logging-jboss-logging</artifactId>
+    </dependency>
+
+    <!-- Bridge SLF4J (Tika's default) -->
+    <dependency>
+        <groupId>org.jboss.slf4j</groupId>
+        <artifactId>slf4j-jboss-logmanager</artifactId>
+        <!--
+          Shouldn't this be "slf4j-jboss-logging"?
+          Ref: https://github.com/quarkusio/quarkus/blob/e3a1545c774be87699f66ddaf87e051367fee2aa/extensions/tika/runtime/pom.xml#L52
+          Ref 2: https://quarkus.io/guides/logging#logging-adapters
+        -->
+    </dependency>
+
+    <!-- Bridge JDK (Jul) logging -->
+    <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging-jdk</artifactId>
+    </dependency>
+    <!-- /logging -->
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
