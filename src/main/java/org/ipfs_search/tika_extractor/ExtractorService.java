@@ -68,7 +68,7 @@ public class ExtractorService {
     	// Pass resource name to Tika to aid in type detection.
     	metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
 
-        System.out.println("Parsing: " + url.toString() + " ("+filename+")");
+    	LOG.infof("Parsing: '%s' (%s)", url.toString(), filename);
 
         ParseContext context = new ParseContext();
 
@@ -121,9 +121,8 @@ public class ExtractorService {
                 abs_uri = tmpURL.toExternalForm();
             } catch (MalformedURLException e) {
             	// Skip MalformedURL's.
-
-            	// TODO: Replace entry below by log statement.
-                // System.err.println("Skipping in links MalformedURLException:\n" + e.getMessage());
+            	// errorv is not working for some reason.
+	    		LOG.errorf(e, "Malformed URL: '%s'", uri);
                 continue;
             }
 
