@@ -34,3 +34,6 @@ nb-configuration.xml
 # patch
 *.orig
 *.rej
+
+# Maven wrapper artifact
+.mvn/wrapper/maven-wrapper.jar
