@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.language.detect.LanguageHandler;
@@ -32,12 +33,21 @@ import com.google.gson.JsonObject;
 
 import org.xml.sax.SAXException;
 
+import org.jboss.logging.Logger;
+
 @ApplicationScoped
 public class ExtractorService {
+    private static final Logger LOG = Logger.getLogger(ExtractorService.class);
+
+    private AutoDetectParser parser;
+
+    public ExtractorService() {
+    	parser = new AutoDetectParser();
+    }
+
     public String extract(URL url) throws IOException, TikaException, SAXException {
     	TikaInputStream inputStream = getInputStream(url);
 
-        AutoDetectParser parser = new AutoDetectParser();
         Metadata metadata = new Metadata();
 
         // Setup handler
