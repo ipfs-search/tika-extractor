@@ -101,6 +101,12 @@
         </exclusions>
     </dependency>
 
+    <!--  Gson: Java to Json conversion -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.6</version>
+    </dependency>
     <!-- SQLite dependency requires sqlite native library -->
     <!--
     <dependency>
