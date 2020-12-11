@@ -16,10 +16,12 @@ import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.language.detect.LanguageHandler;
@@ -27,6 +29,8 @@ import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
+
+import org.xml.sax.ContentHandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -39,7 +43,7 @@ import org.jboss.logging.Logger;
 public class ExtractorService {
     private static final Logger LOG = Logger.getLogger(ExtractorService.class);
 
-    private AutoDetectParser parser;
+    private Parser parser;
 
     public ExtractorService() {
     	parser = new AutoDetectParser();
@@ -53,22 +57,24 @@ public class ExtractorService {
         // Setup handler
         LinkContentHandler link_handler = new LinkContentHandler();
         // TODO: Make max size for body handler configurable.
-        BodyContentHandler body_handler = new BodyContentHandler(10*1024*1024);
+        BodyContentHandler content_handler = new BodyContentHandler(10*1024*1024);
         LanguageHandler language_handler = new LanguageHandler();
-        TeeContentHandler handler = new TeeContentHandler(
-            link_handler, body_handler, language_handler
+        ContentHandler handler = new TeeContentHandler(
+            link_handler, content_handler, language_handler
         );
 
-        // Set filename from path string
-        // TODO: Only do this when a sensible filename is found and/or use optional filename parameter.
-        // String filename = path.substring(path.lastIndexOf("/")+1, path.length());
-        // metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
+        String filename = FilenameUtils.getName(url.getPath());
 
-        // System.out.println("Parsing: " + uri.toString() + " ("+filename+")");
+    	// Pass resource name to Tika to aid in type detection.
+    	metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
+
+        System.out.println("Parsing: " + url.toString() + " ("+filename+")");
+
+        ParseContext context = new ParseContext();
 
         // Parse
         try {
-            parser.parse(inputStream, handler, metadata);
+            parser.parse(inputStream, handler, metadata, context);
         } finally {
             inputStream.close();
         }
@@ -78,7 +84,7 @@ public class ExtractorService {
         // Serialize to JSON
         Gson gson = new Gson();
         JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
-        output_json.add("content", gson.toJsonTree(body_handler.toString().trim()));
+        output_json.add("content", gson.toJsonTree(content_handler.toString().trim()));
         output_json.add("language", gson.toJsonTree(language_handler.getLanguage()).getAsJsonObject());
         output_json.add("urls", gson.toJsonTree(links));
         // TODO: Implement version getter, somehow.
