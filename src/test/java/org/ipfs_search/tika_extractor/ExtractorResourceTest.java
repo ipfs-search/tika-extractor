@@ -5,14 +5,9 @@ package org.ipfs_search.tika_extractor;
 import io.quarkus.test.junit.QuarkusTest;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 import static io.restassured.RestAssured.given;
@@ -20,27 +15,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasItem;
 
 @QuarkusTest
-public class ExtractorResourceTest {
-    private static WireMockServer mock;
-
-    @BeforeAll
-    public static void setUp() {
-        mock = new WireMockServer(options().dynamicPort());
-        mock.start();
-    }
-
-    @AfterEach
-    void afterEach() {
-    	mock.resetAll();
-    }
-
-    @AfterAll
-    public static void tearDown() {
-    	if (mock != null) {
-    		mock.stop();
-    	}
-    }
-
+public class ExtractorResourceTest extends MockServer {
     @Test
     public void testUnreferencedHTML() throws Exception {
     	final String cid = "QmehHHRh1a7u66r7fugebp6f6wGNMGCa7eho9cgjwhAcm2";
