@@ -165,6 +165,14 @@
         <artifactId>jboss-logging-jdk</artifactId>
     </dependency>
     <!-- /logging -->
+
+    <!-- mocking -->
+    <dependency>
+        <groupId>com.github.tomakehurst</groupId>
+        <artifactId>wiremock-jre8</artifactId>
+        <scope>test</scope>
+        <version>2.27.2</version>
+    </dependency>
   </dependencies>
 
   <build>

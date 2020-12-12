@@ -7,14 +7,11 @@ import java.util.Optional;
 @ConfigProperties
 public class ExtractorConfiguration {
 	// Should connect within 1s - this is real bad if it fails!
-	@ConfigProperty(defaultValue = "1000")
-	public int ConnectTimeout;
+	public int ConnectTimeout = 1*1000;
 
  	// No data for 30s - die!
-	@ConfigProperty(defaultValue="30000")
-	public int ReadTimeout;
+	public int ReadTimeout = 30*1000;
 
 	// 10 MB default max.
-	@ConfigProperty(defaultValue="10485760")
-	public int BodyContentWriteLimit;
+	public int BodyContentWriteLimit = 10*1024*1024;
 }
