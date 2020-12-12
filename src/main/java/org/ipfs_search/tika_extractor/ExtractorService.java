@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -45,6 +46,9 @@ public class ExtractorService {
 
     private Parser parser;
 
+    @Inject
+    ExtractorConfiguration configuration;
+
     public ExtractorService() {
     	parser = new AutoDetectParser();
     }
@@ -56,8 +60,17 @@ public class ExtractorService {
 
         // Setup handler
         LinkContentHandler link_handler = new LinkContentHandler();
-        // TODO: Make max size for body handler configurable.
-        BodyContentHandler content_handler = new BodyContentHandler(10*1024*1024);
+
+        // Creates a content handler that writes XHTML body character events to
+        // an internal string buffer. The contents of the buffer can be retrieved
+        // using the {@link #toString()} method.
+        //
+        // The internal string buffer is bounded at the given number of characters.
+        // If this write limit is reached, then a {@link SAXException} is thrown.
+        BodyContentHandler content_handler = new BodyContentHandler(
+            configuration.BodyContentWriteLimit
+        );
+
         LanguageHandler language_handler = new LanguageHandler();
         ContentHandler handler = new TeeContentHandler(
             link_handler, content_handler, language_handler
@@ -96,9 +109,8 @@ public class ExtractorService {
     private TikaInputStream getInputStream(URL url) throws IOException {
         URLConnection connection = url.openConnection();
 
-        // TODO: Move this to configurable settings
-        connection.setConnectTimeout(1000); // Should connect within 1s - this is real bad if it fails!
-        connection.setReadTimeout(30*1000); // No data for 30s - die!
+        connection.setConnectTimeout(configuration.ConnectTimeout);
+        connection.setReadTimeout(configuration.ReadTimeout);
 
         return TikaInputStream.get(connection.getInputStream());
     }
