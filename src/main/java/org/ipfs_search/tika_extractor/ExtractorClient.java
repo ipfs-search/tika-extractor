@@ -19,10 +19,12 @@ import org.jboss.logging.Logger;
 public class ExtractorClient {
     private static final Logger LOG = Logger.getLogger(ExtractorResource.class);
     private Client client;
-    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Inject
     public ExtractorClient(ExtractorConfiguration configuration) {
+        // Requests are indeed blocking here!
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
         client = ClientBuilder.newBuilder()
         		.readTimeout(configuration.ReadTimeout, TimeUnit.SECONDS)
         		.connectTimeout(configuration.ConnectTimeout, TimeUnit.SECONDS)
