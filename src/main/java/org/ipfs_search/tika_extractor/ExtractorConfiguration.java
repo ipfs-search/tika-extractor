@@ -14,4 +14,6 @@ public class ExtractorConfiguration {
 
 	// 10 MB default max.
 	public int BodyContentWriteLimit = 10*1024*1024;
+
+	public int WorkerThreads = 8;
 }

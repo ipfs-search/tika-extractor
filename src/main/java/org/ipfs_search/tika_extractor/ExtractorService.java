@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -47,6 +49,7 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class ExtractorService {
     private static final Logger LOG = Logger.getLogger(ExtractorService.class);
+    private ExecutorService executorService;
 
     private Parser parser;
 
@@ -56,8 +59,10 @@ public class ExtractorService {
     @Inject
     ExtractorClient client;
 
-    public ExtractorService() {
+    @Inject
+    public ExtractorService(ExtractorConfiguration configuration) {
     	parser = new AutoDetectParser();
+        executorService = Executors.newFixedThreadPool(configuration.WorkerThreads);
     }
 
     private String extract(URL url, TikaInputStream inputStream) throws IOException, TikaException, SAXException {
@@ -114,7 +119,7 @@ public class ExtractorService {
     }
 
     public CompletionStage<String> extract(URL url) {
-        return client.get(url.toString()).thenApply(
+        return client.get(url.toString()).thenApplyAsync(
             inputStream -> {
                 // Aparently, in Java, lambda's cannot by marked as throwing exceptions.
                 // Hence, we need to work around this by wrapping them in RuntimeExceptions (which aren't checked).
@@ -124,7 +129,7 @@ public class ExtractorService {
                     LOG.error(e.toString(), e);
                     throw new RuntimeException(e);
                 }
-            }
+            }, executorService
         );
     }
 

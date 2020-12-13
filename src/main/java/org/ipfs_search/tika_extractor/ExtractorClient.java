@@ -18,8 +18,8 @@ import org.jboss.logging.Logger;
 @ApplicationScoped
 public class ExtractorClient {
     private static final Logger LOG = Logger.getLogger(ExtractorResource.class);
-    private ExecutorService executorService = Executors.newCachedThreadPool();
     private Client client;
+    private ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Inject
     public ExtractorClient(ExtractorConfiguration configuration) {
@@ -33,7 +33,7 @@ public class ExtractorClient {
     }
 
     CompletionStage<InputStream> get(String url) {
-    	LOG.debugf("ExtractorClient GET: %s", url);
+    	LOG.infof("ExtractorClient GET: %s", url);
 
         return client.target(url)
                 .request()
