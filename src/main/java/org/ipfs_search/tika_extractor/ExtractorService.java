@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.net.URL;
+import java.net.URI;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
@@ -48,6 +49,8 @@ public class ExtractorService {
 
     @Inject
     ExtractorConfiguration configuration;
+    @Inject
+    ExtractorClient client;
 
     public ExtractorService() {
     	parser = new AutoDetectParser();
@@ -107,12 +110,10 @@ public class ExtractorService {
     }
 
     private TikaInputStream getInputStream(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
+        // connection.setConnectTimeout(configuration.ConnectTimeout);
+        // connection.setReadTimeout(configuration.ReadTimeout);
 
-        connection.setConnectTimeout(configuration.ConnectTimeout);
-        connection.setReadTimeout(configuration.ReadTimeout);
-
-        return TikaInputStream.get(connection.getInputStream());
+        return TikaInputStream.get(client.get(url.toString()));
     }
 
     private List<String> getAbsoluteLinks(URL parent_url, List<Link> links) {
