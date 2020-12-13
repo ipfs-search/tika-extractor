@@ -49,6 +49,7 @@ public class ExtractorService {
 
     @Inject
     ExtractorConfiguration configuration;
+
     @Inject
     ExtractorClient client;
 
@@ -57,7 +58,7 @@ public class ExtractorService {
     }
 
     public String extract(URL url) throws IOException, TikaException, SAXException {
-    	TikaInputStream inputStream = getInputStream(url);
+    	TikaInputStream inputStream = TikaInputStream.get(client.get(url.toString()));
 
         Metadata metadata = new Metadata();
 
@@ -107,13 +108,6 @@ public class ExtractorService {
         // output_json.add("ipfs_tika_version", gson.toJsonTree(_version));
 
         return output_json.toString();
-    }
-
-    private TikaInputStream getInputStream(URL url) throws IOException {
-        // connection.setConnectTimeout(configuration.ConnectTimeout);
-        // connection.setReadTimeout(configuration.ReadTimeout);
-
-        return TikaInputStream.get(client.get(url.toString()));
     }
 
     private List<String> getAbsoluteLinks(URL parent_url, List<Link> links) {
