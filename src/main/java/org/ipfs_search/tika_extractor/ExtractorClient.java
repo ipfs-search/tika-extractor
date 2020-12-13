@@ -10,7 +10,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-// import java.util.concurrent.CompletionStage;
+import java.util.concurrent.CompletionStage;
 import java.io.InputStream;
 import org.jboss.logging.Logger;
 
@@ -32,11 +32,12 @@ public class ExtractorClient {
     	LOG.info("Configured extractor client");
     }
 
-    InputStream get(String url) {
+    CompletionStage<InputStream> get(String url) {
     	LOG.debugf("ExtractorClient GET: %s", url);
 
         return client.target(url)
                 .request()
+                .rx()
                 .get(InputStream.class);
 
     }

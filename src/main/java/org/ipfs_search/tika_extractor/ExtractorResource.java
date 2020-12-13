@@ -3,6 +3,7 @@ package org.ipfs_search.tika_extractor;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.IOException;
+import java.util.concurrent.CompletionStage;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,7 +31,7 @@ public class ExtractorResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String extract(@QueryParam("url") String urlStr) throws WebApplicationException {
+    public CompletionStage<String> extract(@QueryParam("url") String urlStr) throws WebApplicationException {
 		URL url;
     	try {
 	    	url = new URL(urlStr);
@@ -39,17 +40,21 @@ public class ExtractorResource {
     		throw new BadRequestException(e);
     	}
 
-    	String result;
-        try {
-			result = service.extract(url);
-        } catch (IOException e) {
-        	// Upstream unavailable. Tell clients to try again in 2s.
-        	throw new ServiceUnavailableException(2L, e);
-        } catch (TikaException | SAXException e) {
-    		LOG.error(e.toString(), e);
-        	throw new InternalServerErrorException(e);
-        }
+        return service.extract(url);
 
-        return result;
+        // TODO: Re-introduce nuanced error handling, separating:
+        // 1. Upstream timeouts
+        // 2. Parser errors
+        // 3. Upstream unavailable
+        // 4. Body content read limit overschrijding
+   //      try {
+			// return service.extract(url);
+   //      } catch (IOException e) {
+   //      	// Upstream unavailable. Tell clients to try again in 2s.
+   //      	throw new ServiceUnavailableException(2L, e);
+   //      } catch (TikaException | SAXException e) {
+   //  		LOG.error(e.toString(), e);
+   //      	throw new InternalServerErrorException(e);
+   //      }
     }
 }

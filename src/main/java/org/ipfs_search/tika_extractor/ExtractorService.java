@@ -1,5 +1,6 @@
 package org.ipfs_search.tika_extractor;
 
+import java.lang.RuntimeException;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import java.util.concurrent.CompletionStage;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -57,8 +60,8 @@ public class ExtractorService {
     	parser = new AutoDetectParser();
     }
 
-    public String extract(URL url) throws IOException, TikaException, SAXException {
-    	TikaInputStream inputStream = TikaInputStream.get(client.get(url.toString()));
+    private String extract(URL url, TikaInputStream inputStream) throws IOException, TikaException, SAXException {
+        // Synchronous implementation of extraction
 
         Metadata metadata = new Metadata();
 
@@ -82,10 +85,10 @@ public class ExtractorService {
 
         String filename = FilenameUtils.getName(url.getPath());
 
-    	// Pass resource name to Tika to aid in type detection.
-    	metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
+        // Pass resource name to Tika to aid in type detection.
+        metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
 
-    	LOG.infof("Parsing: '%s' (%s)", url.toString(), filename);
+        LOG.infof("Parsing: '%s' (%s)", url.toString(), filename);
 
         ParseContext context = new ParseContext();
 
@@ -108,6 +111,21 @@ public class ExtractorService {
         // output_json.add("ipfs_tika_version", gson.toJsonTree(_version));
 
         return output_json.toString();
+    }
+
+    public CompletionStage<String> extract(URL url) {
+        return client.get(url.toString()).thenApply(
+            inputStream -> {
+                // Aparently, in Java, lambda's cannot by marked as throwing exceptions.
+                // Hence, we need to work around this by wrapping them in RuntimeExceptions (which aren't checked).
+                try {
+                    return extract(url, TikaInputStream.get(inputStream));
+                } catch (Exception e) {
+                    LOG.error(e.toString(), e);
+                    throw new RuntimeException(e);
+                }
+            }
+        );
     }
 
     private List<String> getAbsoluteLinks(URL parent_url, List<Link> links) {
