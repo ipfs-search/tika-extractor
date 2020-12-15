@@ -37,6 +37,8 @@ import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import org.xml.sax.ContentHandler;
 
 import com.google.gson.Gson;
@@ -54,6 +56,12 @@ public class ExtractorService {
 
     private Parser parser;
 
+    private String tikaVersion;
+    final private String IPFSTikaVersion= "0.5.0"; // Legacy IPFS Tika version; static
+
+    // @ConfigProperty(name = "quarkus.application.version", defaultValue = "not-set")
+    private String tikaExtractorVersion;
+
     @Inject
     ExtractorConfiguration configuration;
 
@@ -63,6 +71,8 @@ public class ExtractorService {
     @Inject
     public ExtractorService(ExtractorConfiguration configuration) {
     	parser = new AutoDetectParser();
+        tikaVersion = parser.getClass().getPackage().getSpecificationVersion();
+        tikaExtractorVersion = getClass().getPackage().getSpecificationVersion();
         executorService = Executors.newFixedThreadPool(configuration.WorkerThreads);
     }
 
@@ -113,8 +123,9 @@ public class ExtractorService {
         output_json.add("content", gson.toJsonTree(content_handler.toString().trim()));
         output_json.add("language", gson.toJsonTree(language_handler.getLanguage()).getAsJsonObject());
         output_json.add("urls", gson.toJsonTree(links));
-        // TODO: Implement version getter, somehow.
-        // output_json.add("ipfs_tika_version", gson.toJsonTree(_version));
+        output_json.add("ipfs_tika_version", gson.toJsonTree(IPFSTikaVersion));
+        output_json.add("tika_version", gson.toJsonTree(tikaVersion));
+        output_json.add("tika_extractor_version", gson.toJsonTree(tikaExtractorVersion));
 
         return output_json.toString();
     }
