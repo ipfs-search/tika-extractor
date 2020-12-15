@@ -46,6 +46,7 @@ import org.xml.sax.SAXException;
 
 import org.jboss.logging.Logger;
 
+
 @ApplicationScoped
 public class ExtractorService {
     private static final Logger LOG = Logger.getLogger(ExtractorService.class);
@@ -122,12 +123,11 @@ public class ExtractorService {
         return client.get(url.toString()).thenApplyAsync(
             inputStream -> {
                 // Aparently, in Java, lambda's cannot by marked as throwing exceptions.
-                // Hence, we need to work around this by wrapping them in RuntimeExceptions (which aren't checked).
+                // Hence, we need to work around this by wrapping them in ExtractorException (which subclasses RuntimeException and hence isn't checked).
                 try {
                     return extract(url, TikaInputStream.get(inputStream));
                 } catch (Exception e) {
-                    LOG.error(e.toString(), e);
-                    throw new RuntimeException(e);
+                    throw new ExtractorException(e);
                 }
             }, executorService
         );
@@ -151,8 +151,7 @@ public class ExtractorService {
                 abs_uri = tmpURL.toExternalForm();
             } catch (MalformedURLException e) {
             	// Skip MalformedURL's.
-            	// errorv is not working for some reason.
-	    		LOG.errorf(e, "Malformed URL: '%s'", uri);
+	    		LOG.errorf(e, "Malformed URL in links: '%s'", uri);
                 continue;
             }
 

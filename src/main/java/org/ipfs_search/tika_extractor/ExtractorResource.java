@@ -1,42 +1,43 @@
 package org.ipfs_search.tika_extractor;
 
 import java.net.URL;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
-import java.io.IOException;
+import java.net.SocketTimeoutException;
+
 import java.util.concurrent.CompletionStage;
+import java.lang.RuntimeException;
 
 import io.quarkus.vertx.web.Route;
 import io.quarkus.vertx.web.Param;
+
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerResponse;
+
 import io.smallrye.mutiny.Uni;
 
-// import javax.ws.rs.GET;
-// import javax.ws.rs.Path;
-// import javax.ws.rs.QueryParam;
-// import javax.ws.rs.Produces;
-// import javax.ws.rs.core.MediaType;
-
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.ProcessingException;
+import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
 
-import org.apache.tika.exception.TikaException;
-import org.xml.sax.SAXException;
-
 import org.jboss.logging.Logger;
 
-// @Path("/extract")
 public class ExtractorResource {
     private static final Logger LOG = Logger.getLogger(ExtractorResource.class);
 
     @Inject
     ExtractorService service;
 
-    // @GET
-    // @Produces(MediaType.APPLICATION_JSON)
-    @Route(path="/extract")
+    @Route(
+      path = "/extract",
+      produces = "application/json",
+      methods = HttpMethod.GET
+    )
     public Uni<String> extract(@Param("url") String urlStr) throws WebApplicationException {
         URL url;
         try {
@@ -48,24 +49,77 @@ public class ExtractorResource {
 
         Uni<String> result = Uni.createFrom().completionStage(service.extract(url));
 
-        LOG.info("Returning async response.");
+        LOG.debug("Returning async response.");
 
         return result;
+    }
 
+    // 400 in upstream yields 400 (BAD REQUEST)
+    @Route(
+        type = Route.HandlerType.FAILURE,
+        produces = "application/json"
+    )
+    void upstreambadrequest(javax.ws.rs.BadRequestException e, HttpServerResponse response) {
+        response.setStatusCode(400).end(e.toString());
+    }
 
-        // TODO: Re-introduce nuanced error handling, separating:
-        // 1. Upstream timeouts
-        // 2. Parser errors
-        // 3. Upstream unavailable
-        // 4. Body content read limit overschrijding
-       //      try {
-                // return service.extract(url);
-       //      } catch (IOException e) {
-       //       // Upstream unavailable. Tell clients to try again in 2s.
-       //       throw new ServiceUnavailableException(2L, e);
-       //      } catch (TikaException | SAXException e) {
-       //       LOG.error(e.toString(), e);
-       //       throw new InternalServerErrorException(e);
-       //      }
+    // 404 in upstream yields 404 (NOT FOUND)
+    @Route(
+        type = Route.HandlerType.FAILURE,
+        produces = "application/json"
+    )
+    void upstreambadrequest(javax.ws.rs.NotFoundException e, HttpServerResponse response) {
+        response.setStatusCode(404).end(e.toString());
+    }
+
+    // 500 in upstream yields 503 (BAD GATEWAY)
+    @Route(
+        type = Route.HandlerType.FAILURE,
+        produces = "application/json"
+    )
+    void upstreamserverexception(javax.ws.rs.InternalServerErrorException e, HttpServerResponse response) {
+        response.setStatusCode(503).end(e.toString());
+    }
+
+    @Route(
+        type = Route.HandlerType.FAILURE,
+        produces = "application/json"
+    )
+    void processingexception(javax.ws.rs.ProcessingException e, HttpServerResponse response) {
+        // It seems that this is where Client exceptions end up.
+
+        if (e.getCause() instanceof java.net.ConnectException) {
+            // Unable to connect:  502 (SERVICE UNAVAILABLE)
+            response.setStatusCode(502).end(e.toString());
+            return;
+        }
+
+        if (e.getCause() instanceof java.net.SocketTimeoutException) {
+            // Gateway timeout
+            response.setStatusCode(504).end(e.toString());
+            return;
+        }
+
+        LOG.errorf(e, "Unexpected exceptiqon in Client: %s", e.toString());
+        response.setStatusCode(500).end(e.toString());
+    }
+
+    @Route(
+        type = Route.HandlerType.FAILURE,
+        produces = "application/json"
+    )
+    void extractorexception(ExtractorException e, HttpServerResponse response) {
+        // This is where exceptions from the Tika end up.
+
+        if (e.getCause() instanceof org.xml.sax.SAXException) {
+            // Body too large, amongst possible others.
+            // Note that content would be available in such case, hence we *might* choose to index it (in the future).
+            // Ref: "org.apache.tika.sax.WriteOutContentHandler$WriteLimitReachedException: Your document contained more than 262143 characters, and so your requested limit has been reached. To receive the full text of the document, increase your limit. (Text up to the limit is however available)."
+            response.setStatusCode(500).end(e.toString());
+            return;
+        }
+
+        // Any other errors here are propqer internal server errors.
+        response.setStatusCode(500).end(e.toString());
     }
 }

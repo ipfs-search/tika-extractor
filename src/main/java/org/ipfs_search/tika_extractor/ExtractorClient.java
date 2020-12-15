@@ -26,8 +26,8 @@ public class ExtractorClient {
         ExecutorService executorService = Executors.newCachedThreadPool();
 
         client = ClientBuilder.newBuilder()
-        		.readTimeout(configuration.ReadTimeout, TimeUnit.SECONDS)
-        		.connectTimeout(configuration.ConnectTimeout, TimeUnit.SECONDS)
+        		.readTimeout(configuration.ReadTimeout, TimeUnit.MILLISECONDS)
+        		.connectTimeout(configuration.ConnectTimeout, TimeUnit.MILLISECONDS)
                 .executorService(executorService)
                 .build();
 
@@ -41,6 +41,5 @@ public class ExtractorClient {
                 .request()
                 .rx()
                 .get(InputStream.class);
-
     }
 }
