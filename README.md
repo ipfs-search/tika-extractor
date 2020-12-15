@@ -27,24 +27,29 @@ If you want to build an _über-jar_, execute the following command:
 
 The application is now runnable using `java -jar target/tika-extractor-1.0.0-SNAPSHOT-runner.jar`.
 
-## Creating a native executable
+## API
 
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
+The API has only a single endpoint, and a single parameter: `/extract?url={url}`
+
+Example:
+```
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
+## Configuration
 
-You can then execute your native executable with: `./target/tika-extractor-1.0.0-SNAPSHOT-runner`
+* Connect timeout: HTTP/TCP request timeout (max. seconds until connection established).
+* Read timeout: HTTP/TCP socket read timeout (max. seconds allowed time with no content coming in).
+* Body content write limit: maximum amount of textual content extracted from files, in bytes.
+* Worker threads: number of Tika parser threads to use.
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
+### Environment
+* EXTRACTOR_CONNECT_TIMEOUT
+* EXTRACTOR_READ_TIMEOUT
+* EXTRACTOR_BODY_CONTENT_WRITE_LIMIT
+* EXTRACTOR_WORKER_THREADS
 
-# RESTEasy JAX-RS
-
-<p>A Hello World RESTEasy resource</p>
-
-Guide: https://quarkus.io/guides/rest-json
+### application.properties
+* "extractor.connect-timeout"
+* "extractor.read-timeout"
+* "extractor.body-content-write-limit"
+* "extractor.worker-threads"
