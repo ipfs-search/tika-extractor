@@ -56,10 +56,11 @@ public class ExtractorService {
 
     private Parser parser;
 
-    private String tikaVersion;
-    final private String IPFSTikaVersion= "0.5.0"; // Legacy IPFS Tika version; static
+    final private String IPFSTikaVersion = "0.5.0"; // Legacy IPFS Tika version; static
 
-    // @ConfigProperty(name = "quarkus.application.version", defaultValue = "not-set")
+    @ConfigProperty(name = "tika.version", defaultValue = "not-set")
+    private String tikaVersion;
+    @ConfigProperty(name = "tika-extractor.version", defaultValue = "not-set")
     private String tikaExtractorVersion;
 
     @Inject
@@ -71,9 +72,36 @@ public class ExtractorService {
     @Inject
     public ExtractorService(ExtractorConfiguration configuration) {
     	parser = new AutoDetectParser();
-        tikaVersion = parser.getClass().getPackage().getSpecificationVersion();
-        tikaExtractorVersion = getClass().getPackage().getSpecificationVersion();
+        tikaVersion = getVersion("org.apache.tika/parser");
+        tikaExtractorVersion = getVersion("");
         executorService = Executors.newFixedThreadPool(configuration.ParserWorkerThreads);
+    }
+
+    private String getVersion(String path) {
+        // TODO: Replace by the simply ConfigProperty, once fixed in Quarkus:
+        // @ConfigProperty(name = "quarkus.application.version", defaultValue = "not-set")
+
+        // Ref: https://stackoverflow.com/questions/2712970/get-maven-artifact-version-at-runtime
+        String version = null;
+
+        // try to load from maven properties first
+        try {
+            Properties p = new Properties();
+            InputStream is = getClass().getResourceAsStream("/META-INF/maven/org.ipfs_search/tika_extractor/pom.properties");
+            if (is != null) {
+                p.load(is);
+                version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to get version information from pom properties", e);
+        }
+
+        if (version == null) {
+            // we could not compute the version so use "dev"
+            version = "dev-build";
+        }
+
+        return version;
     }
 
     private String extract(URL url, TikaInputStream inputStream) throws IOException, TikaException, SAXException {

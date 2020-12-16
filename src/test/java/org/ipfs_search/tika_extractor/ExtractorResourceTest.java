@@ -281,4 +281,30 @@ public class ExtractorResourceTest extends MockServer {
           .then()
              .statusCode(500);
     }
+
+    @Test
+    public void testVersion() {
+        final String cid = "QmehHHRh1a7u66r7fugebp6f6wGNMGCa7eho9cgjwhAcm2";
+        final String path = "/ipfs/" + cid;
+
+        // Unreferenced HTML file
+        mock.stubFor(
+         get(urlEqualTo(path)).
+         willReturn(
+             aResponse().
+             withHeader("Content-Type", "text/html").
+             withBodyFile(cid)
+         )
+        );
+
+        given()
+          .when().get(makeUrl(path))
+          .then()
+             .statusCode(200)
+             .body(
+                "ipfs_tika_version", is("0.5.0"),
+                "tika_version", is("1.25"),
+                "tika_extractor_version", is("0.9")
+             );
+    }
 }
