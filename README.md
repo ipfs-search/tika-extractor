@@ -40,16 +40,22 @@ Example:
 * Connect timeout: HTTP/TCP request timeout (max. seconds until connection established).
 * Read timeout: HTTP/TCP socket read timeout (max. seconds allowed time with no content coming in).
 * Body content write limit: maximum amount of textual content extracted from files, in bytes.
-* Worker threads: number of Tika parser threads to use.
+* Parser worker threads: number of Tika parser threads to use.
+* Connection pool size: maximum number of client connections to maintain.
+* Max pooled per route: maximum number of connections to maintain per route.
 
 ### Environment
 * EXTRACTOR_CONNECT_TIMEOUT
 * EXTRACTOR_READ_TIMEOUT
 * EXTRACTOR_BODY_CONTENT_WRITE_LIMIT
-* EXTRACTOR_WORKER_THREADS
+* EXTRACTOR_PARSER_WORKER_THREADS
+* EXTRACTOR_CONNECTION_POOL_SIZE
+* EXTRACTOR_MAX_POOLED_PER_ROUTE
 
 ### application.properties
 * "extractor.connect-timeout"
 * "extractor.read-timeout"
 * "extractor.body-content-write-limit"
-* "extractor.worker-threads"
+* "extractor.parser-worker-threads"
+* "extractor.connection-pool-size"
+* "extractor.max-pooled-per-route"

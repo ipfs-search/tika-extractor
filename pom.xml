@@ -53,6 +53,16 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-vertx-web</artifactId>
     </dependency>
+    <dependency>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-resteasy</artifactId>
+    </dependency>
+    <!-- Not working for unknown reason, see ExtractorClient.
+    <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client-vertx</artifactId>
+    </dependency>
+    -->
 
     <!-- native transport -->
     <dependency>

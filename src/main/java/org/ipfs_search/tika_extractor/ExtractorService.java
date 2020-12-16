@@ -73,7 +73,7 @@ public class ExtractorService {
     	parser = new AutoDetectParser();
         tikaVersion = parser.getClass().getPackage().getSpecificationVersion();
         tikaExtractorVersion = getClass().getPackage().getSpecificationVersion();
-        executorService = Executors.newFixedThreadPool(configuration.WorkerThreads);
+        executorService = Executors.newFixedThreadPool(configuration.ParserWorkerThreads);
     }
 
     private String extract(URL url, TikaInputStream inputStream) throws IOException, TikaException, SAXException {

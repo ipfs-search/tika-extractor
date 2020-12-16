@@ -15,5 +15,13 @@ public class ExtractorConfiguration {
 	// 10 MB default max.
 	public int BodyContentWriteLimit = 10*1024*1024;
 
-	public int WorkerThreads = 8;
+	public int ParserWorkerThreads = 8;
+
+    // public int ClientWorkerThreads = 8;
+
+    public int ConnectionPoolSize = 256;
+    public int MaxPooledPerRoute = 256;
+
+    // 256 KB is IPFS' standard chunk size
+    public int ClientResponseBufferSize = 256*1024;
 }
