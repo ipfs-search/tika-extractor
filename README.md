@@ -1,8 +1,20 @@
-# tika-extractor project
+# tika-extractor
+[![Build Status](https://travis-ci.org/ipfs-search/tika-extractor.svg?branch=master)](https://travis-ci.org/ipfs-search/tika-extractor)
+[![Maintainability](https://api.codeclimate.com/v1/badges/af0ae74e8fe5e79e4d38/maintainability)](https://codeclimate.com/github/ipfs-search/tika-extractor/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/af0ae74e8fe5e79e4d38/test_coverage)](https://codeclimate.com/github/ipfs-search/tika-extractor/test_coverage)
+[![Backers on Open Collective](https://opencollective.com/ipfs-search/backers/badge.svg)](#backers)
+ [![Sponsors on Open Collective](https://opencollective.com/ipfs-search/sponsors/badge.svg)](#sponsors)
+
+Tika-based webservice to extract metadata, content and language from arbitrary HTTP content.
+Part of [ipfs-search.com](ipfs-search.com),
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+
+## Requirements
+* [Java 8+ SDK](https://openjdk.java.net/install/)
+* [Maven](https://maven.apache.org/install.html)
 
 ## Running the application in dev mode
 
