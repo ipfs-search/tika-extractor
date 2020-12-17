@@ -76,7 +76,7 @@ public class ExtractorResource {
         response.setStatusCode(400).end(throwableToJson(e));
     }
 
-    // 404 in upstream yields 504 (NOT FOUND)
+    // 404 in upstream yields 404 (NOT FOUND)
     @Route(
         type = Route.HandlerType.FAILURE,
         produces = "application/json",
