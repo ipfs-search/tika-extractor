@@ -147,14 +147,14 @@ public class ExtractorResourceTest extends MockServer {
         final String cid = "QmehHHRh1a7u66r7fugebp6f6wGNMGCa7eho9cgjwhAcm2";
         final String path = "/ipfs/" + cid;
 
-        // Configured ReadTimeout to 300ms
+        // Configured ReadTimeout to 600ms
 
         // Unreferenced HTML file
         mock.stubFor(
          get(urlEqualTo(path)).
          willReturn(
              aResponse().
-             withFixedDelay(400).
+             withFixedDelay(700).
              withHeader("Content-Type", "text/html").
              withBodyFile(cid)
          )
@@ -171,7 +171,7 @@ public class ExtractorResourceTest extends MockServer {
         final String cid = "QmehHHRh1a7u66r7fugebp6f6wGNMGCa7eho9cgjwhAcm2";
         final String path = "/ipfs/" + cid;
 
-        // Configured ReadTimeout to 300ms
+        // Configured ReadTimeout to 600ms
 
         // Unreferenced HTML file
         mock.stubFor(

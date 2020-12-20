@@ -1,0 +1,18 @@
+plugins:
+  sonar-java:
+    enabled: true
+    config:
+      minimum_severity: critical
+      tests_patterns:
+        - src/test/**
+  git-legal:
+    enabled: true
+    config:
+      allow_affero_copyleft: true
+      allow_strong_copyleft: true
+  duplication:
+    enabled: true
+    exclude_patterns:
+      - "src/test/**"
+exclude_patterns:
+  - ".mvn/**"
