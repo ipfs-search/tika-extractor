@@ -30,7 +30,7 @@ The application can be packaged using:
 ```shell script
 ./mvnw package
 ```
-It produces the `tika-extractor-<version>-SNAPSHOT-runner.jar` file in the `/target` directory.
+It produces the `tika-extractor-<version>-runner.jar` file in the `/target` directory.
 Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
 
 If you want to build an _über-jar_, execute the following command:
@@ -38,7 +38,7 @@ If you want to build an _über-jar_, execute the following command:
 ./mvnw package -Dquarkus.package.type=uber-jar
 ```
 
-The application is now runnable using `java -jar target/tika-extractor-<version>-SNAPSHOT-runner.jar`.
+The application is now runnable using `java -jar target/tika-extractor-<version>-runner.jar`.
 
 ## API
 
