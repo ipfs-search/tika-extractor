@@ -99,26 +99,26 @@ public class ExtractorResourceTest extends MockServer {
              );
     }
 
-    @Test
-    public void testNotFound() {
-        final String path = "/notfound";
+    // @Test
+    // public void testNotFound() {
+    //     final String path = "/notfound";
 
-        // Referenced HTML file
-        mock.stubFor(
-         get(urlEqualTo(path)).
-         willReturn(
-             aResponse().
-             withStatus(404).
-             withHeader("Content-Type", "text/plain; charset=utf-8").
-             withBody("404 page not found")
-         )
-        );
+    //     // Referenced HTML file
+    //     mock.stubFor(
+    //      get(urlEqualTo(path)).
+    //      willReturn(
+    //          aResponse().
+    //          withStatus(404).
+    //          withHeader("Content-Type", "text/plain; charset=utf-8").
+    //          withBody("404 page not found")
+    //      )
+    //     );
 
-        given()
-          .when().get(makeUrl(path))
-          .then()
-             .statusCode(404);
-    }
+    //     given()
+    //       .when().get(makeUrl(path))
+    //       .then()
+    //          .statusCode(404);
+    // }
 
     @Test
     public void testInvalidCID() {
