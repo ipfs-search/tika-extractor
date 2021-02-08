@@ -4,11 +4,11 @@ FROM maven:3-openjdk-11 AS build
 COPY pom.xml /
 
 # get all the downloads out of the way
-RUN mvn verify clean --fail-never
+RUN mvn -B verify clean --fail-never
 
 # Build
 COPY src /src
-RUN mvn package -Dquarkus.package.type=uber-jar
+RUN mvn -B package -Dquarkus.package.type=uber-jar
 
 FROM adoptopenjdk/openjdk11:alpine-jre
 COPY --from=build /target/*-runner.jar /
