@@ -8,7 +8,7 @@ RUN mvn verify clean --fail-never
 
 # Build
 COPY src /src
-RUN mvn package -Dquarkus.package.type=uber-jar
+RUN mvn package -Dquarkus.package.type=uber-jar -DskipTests
 
 FROM adoptopenjdk/openjdk11:alpine-jre
 COPY --from=build /target/*-runner.jar /
