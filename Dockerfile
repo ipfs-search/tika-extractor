@@ -11,9 +11,9 @@ COPY src /src
 RUN mvn package -Dquarkus.package.type=uber-jar -DskipTests
 
 FROM adoptopenjdk/openjdk11:alpine-jre
-COPY --from=build /target/*-runner.jar /
+COPY --from=build /target/quarkus-app/quarkus-run.jar /
 
 ENV QUARKUS_HTTP_HOST=0.0.0.0
 
 EXPOSE 8081
-CMD ["sh", "-c", "java -jar *.jar"]
+CMD ["sh", "-c", "java -jar quarkus-run.jar"]
