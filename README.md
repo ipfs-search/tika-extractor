@@ -46,7 +46,7 @@ The API has only a single endpoint, and a single parameter: `/extract?url={url}`
 
 Example:
 ```bash
-$ curl http://localhost:8080/extract?url=https://ipfs-search.com | jq
+$ curl http://localhost:8081/extract?url=https://ipfs-search.com | jq
 ```
 ```json
 {
