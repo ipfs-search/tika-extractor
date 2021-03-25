@@ -15,7 +15,7 @@ after_script:
   - JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage target/site/jacoco/jacoco.xml --input-type jacoco
   - ./cc-test-reporter upload-coverage
 
-before_deploy: ./mvnw package -Dquarkus.package.type=uber-jar
+before_deploy: ./mvnw package -Dquarkus.package.type=uber-jar -DskipTests
 
 deploy:
   provider: releases
