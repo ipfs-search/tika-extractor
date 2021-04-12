@@ -303,8 +303,8 @@ public class ExtractorResourceTest extends MockServer {
              .statusCode(200)
              .body(
                 "ipfs_tika_version", is("0.5.0"),
-                "tika_version", is("1.25"),
-                "tika_extractor_version", is("1.0")
+                "tika_version", is("1.26"),
+                "tika_extractor_version", is("1.1")
              );
     }
 }
