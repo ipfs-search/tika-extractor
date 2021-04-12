@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ipfs_search</groupId>
   <artifactId>tika-extractor</artifactId>
-  <version>1.0</version>
+  <version>1.0.1</version>
   <properties>
     <tika.version>1.25</tika.version>
     <tika-extractor.version>1.0</tika-extractor.version>
