@@ -1,6 +1,6 @@
 # tika-extractor
 
-[![Build Status](https://www.travis-ci.com/ipfs-search/tika-extractor.svg?branch=main)](https://www.travis-ci.com/ipfs-search/tika-extractor)
+[![pipeline status](https://gitlab.com/ipfs-search.com/tika-extractor/badges/master/pipeline.svg)](https://gitlab.com/ipfs-search.com/tika-extractor/-/commits/main)
 [![Maintainability](https://api.codeclimate.com/v1/badges/af0ae74e8fe5e79e4d38/maintainability)](https://codeclimate.com/github/ipfs-search/tika-extractor/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/af0ae74e8fe5e79e4d38/test_coverage)](https://codeclimate.com/github/ipfs-search/tika-extractor/test_coverage)
 [![Backers on Open Collective](https://opencollective.com/ipfs-search/backers/badge.svg)](#backers)
